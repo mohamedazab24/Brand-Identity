@@ -14,7 +14,11 @@ concurrency:
 
 env:
   NODE_OPTIONS: --max_old_space_size=6144
-  DIRECTUS_URL: ${{ DIRECTUS_URL }}
+  DIRECTUS_URL: ${{ secrets.DIRECTUS_URL }}
+  DB_HOST: az-services-server.postgres.database.azure.com
+  DB_USER: ftvvkdcfwm
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+  DB_NAME: your_database_name
 
 jobs:
   typecheck:
