@@ -36,10 +36,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Prepare
-        uses: ./.github/actions/prepare
-
-      - name: Run Linter
+      - name: Run linter
         run: pnpm lint
         env:
           NODE_OPTIONS: --max_old_space_size=6144
