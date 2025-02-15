@@ -8,37 +8,40 @@ on:
     branches:
       - main
 
-concurrency:
-  group: lint-${{ github.ref }}
-  cancel-in-progress: true
-
-env:
-  NODE_OPTIONS: --max_old_space_size=6144
-  DIRECTUS_URL: ${{ secrets.DIRECTUS_URL }}
-
 jobs:
   lint:
-    name: Lint
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
-          version: 7.5.0
+          node-version: '18'
 
-      - name: Cache pnpm store
-        uses: actions/cache@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.0.0
+        with:
+          version: 7
+
+      - name: Restore pnpm cache
+        uses: actions/cache@v2
         with:
           path: ~/.pnpm-store
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: Linux-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            Linux-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install
 
+      - name: Prepare
+        uses: ./.github/actions/prepare
+
       - name: Run Linter
         run: pnpm lint
+        env:
+          NODE_OPTIONS: --max_old_space_size=6144
+          DIRECTUS_URL: ${{ secrets.DIRECTUS_URL }}
+          PNPM_HOME: /home/runner/setup-pnpm/node_modules/.bin
